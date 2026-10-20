@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  pythonapp:
+    build: .
+    ports:
+      - "5001:8080"
+    env_file: .env
+    environment:
+      MYSQL_HOST: mysql
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
